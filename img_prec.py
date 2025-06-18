@@ -69,7 +69,15 @@ def generate_json(wires, components):
         if label == "switch":
             elem["closed"] = False
         elif label == "ammeter":
-            elem["internalResistance"] = 0.1
+            elem["resistance"] = 1
+            elem["type"] = "seriesAmmeter"
+            elem["customLabel"] = "电流表"
+            elem["customDisplayFunction"]: "i => `${i.toFixed(2)} A`"
+        elif label == "voltmeter":
+            elem["resistance"] = 1
+            elem["type"] = "seriesAmmeter"
+            elem["customLabel"] = "电压表"
+            elem["customDisplayFunction"]: "i => `${i.toFixed(2)} V`"
         elif label == "RESISTOR_BOX" or label == "VARIABLE_RESISTOR":
             elem["type"] = "resistor"
             elem["resistorType"] = label
@@ -161,8 +169,8 @@ def visualize_wires_and_components(image, results, components):
         cv2.putText(img, "end", (end[0]+5, end[1]-5), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 0, 0), 1)
 
     # ==== 画元件框 ====
-    labels = {"微安电流表": "ammeter",
-              "待测表头": "ammeter",
+    labels = {"微安电流表": "seriesAmmeter",
+              "待测表头": "seriesAmmeter",
               "电阻箱": "RESISTOR_BOX",
               "滑动变阻器": "VARIABLE_RESISTOR",
               "单刀双掷开关": "switch",
