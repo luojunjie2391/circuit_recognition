@@ -69,14 +69,15 @@ def generate_json(wires, components):
         if label == "switch":
             elem["closed"] = False
         elif label == "ammeter":
-            elem["internalResistance"] = 0.01
+            elem["internalResistance"] = 0.1
         elif label == "RESISTOR_BOX" or label == "VARIABLE_RESISTOR":
             elem["type"] = "resistor"
             elem["resistorType"] = label
+            elem["resistance"] = 10
         elif label == "battery":
             elem["voltage"] = 9
             elem["batterType"] = "BATTERRY"
-            elem["internalResistance"] = 0.0001
+            elem["internalResistance"] = 0.01
         elements.append(elem)
         element_count += 1
 
