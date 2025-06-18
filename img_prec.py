@@ -72,12 +72,12 @@ def generate_json(wires, components):
             elem["resistance"] = 1
             elem["type"] = "seriesAmmeter"
             elem["customLabel"] = "电流表"
-            elem["customDisplayFunction"]: "i => `${i.toFixed(2)} A`"
+            elem["customDisplayFunction"] = "i => `${i.toFixed(2)} A`"
         elif label == "voltmeter":
             elem["resistance"] = 1
             elem["type"] = "seriesAmmeter"
             elem["customLabel"] = "电压表"
-            elem["customDisplayFunction"]: "i => `${i.toFixed(2)} V`"
+            elem["customDisplayFunction"] = "i => `${i.toFixed(2)} V`"
         elif label == "RESISTOR_BOX" or label == "VARIABLE_RESISTOR":
             elem["type"] = "resistor"
             elem["resistorType"] = label
