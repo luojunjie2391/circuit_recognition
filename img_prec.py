@@ -19,7 +19,10 @@ def generate_json(wires, components):
               "电阻箱": "RESISTOR_BOX",
               "滑动变阻器": "VARIABLE_RESISTOR",
               "单刀双掷开关": "switch",
-              "电源": "battery"
+              "电源": "BATTERY",
+              "电阻": "RESISTOR",
+              "黑盒电流表": "ammeter",
+              "螺线管": "solenoid"
               }
 
     for comp in components:
@@ -78,7 +81,7 @@ def generate_json(wires, components):
             elem["type"] = "seriesAmmeter"
             elem["customLabel"] = "电压表"
             elem["customDisplayFunction"] = "i => `${i.toFixed(2)} V`"
-        elif label == "RESISTOR_BOX" or label == "VARIABLE_RESISTOR":
+        elif label == "RESISTOR_BOX" or label == "VARIABLE_RESISTOR" or label == "RESISTOR":
             elem["type"] = "resistor"
             elem["resistorType"] = label
             elem["resistance"] = 10
@@ -86,6 +89,9 @@ def generate_json(wires, components):
             elem["voltage"] = 9
             elem["batterType"] = "BATTERRY"
             elem["internalResistance"] = 0.01
+        elif label == "resistor":
+            elem["resistorType"] = "RESISTOR"
+            elem["resistance"] = 1
         elements.append(elem)
         element_count += 1
 
@@ -169,29 +175,32 @@ def visualize_wires_and_components(image, results, components):
         cv2.putText(img, "end", (end[0]+5, end[1]-5), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 0, 0), 1)
 
     # ==== 画元件框 ====
-    labels = {"微安电流表": "seriesAmmeter",
-              "待测表头": "seriesAmmeter",
+    labels = {"微安电流表": "ammeter",
+              "待测表头": "ammeter",
               "电阻箱": "RESISTOR_BOX",
               "滑动变阻器": "VARIABLE_RESISTOR",
               "单刀双掷开关": "switch",
-              "电源": "BATTERY"
+              "电源": "BATTERY",
+              "电阻": "RESISTOR",
+              "黑盒电流表": "ammeter",
+              "螺线管": "solenoid"
               }
     for comp in components:
         label = labels[comp["label"]]
         x1, y1, x2, y2 = comp["bbox"]
 
-        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
-        cv2.putText(img, label, (x1, y1 - 8), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 128, 0), 2)
+        cv2.putText(img, label, (x1, y1 - 8), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 128, 0), 2)
     _, encode_img = cv2.imencode('.jpg', img)
     img_base64 = base64.b64encode(encode_img).decode('utf-8')
-    #cv2.imwrite('output.jpg', img)
+    # cv2.imwrite('output.jpg', img)
+    # cv2.namedWindow("Wires and Components", cv2.WINDOW_NORMAL)
+    # cv2.imshow("Wires and Components", img)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
     return img_base64
     # 显示图像
     # resized = cv2.resize(img, (0, 0), fx=0.6, fy=0.6)
-    # cv2.namedWindow("Wires and Components", cv2.WINDOW_NORMAL)
-    # cv2.imshow("Wires and Components", resized)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
 
 
 def img_recognition(img):
@@ -213,7 +222,8 @@ def img_recognition(img):
     request = {
         "success": True,
         "recognizedImage": f"data:image/jpeg;base64,{results_img}",
-        "circuitData": results
+        "circuitData": results,
+        "components": elements
     }
     # with open('test.json', "w") as f:
     #     json.dump(request, f, indent=2)
